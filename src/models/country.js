@@ -17,7 +17,11 @@ Country.prototype.getData = function(){
       console.log(this);
       this.getCountry(selectedIndex)
       // console.log(selectedIndex);
-});
+    });
+    PubSub.subscribe('CountryInfoView:selectedBorder', (event) => {
+      const selectedBorder = event.detail;
+      this.getIndex(selectedBorder);
+    });
 }
 
 Country.prototype.getCountry = function(selectedIndex){
@@ -25,7 +29,23 @@ Country.prototype.getCountry = function(selectedIndex){
   console.log(selectedCountry);
   PubSub.publish('Country:selectedCountry', selectedCountry);
   };
-  // const request = new RequestHelper('https://restcountries.eu/rest/v2/all');
+
+  Country.prototype.getIndex = function(selectedBorder){
+    let actualResult = ''
+    const result = this.text.map((country) => {
+      return country.alpha3Code;
+    })
+      .forEach((code, index) => {
+        if (code === selectedBorder) {
+          actualResult = index;
+          return actualResult;
+        }
+
+      });
+    // return result;
+    console.log(actualResult);
+    this.getCountry(actualResult);
+  }
 
 
 module.exports = Country;

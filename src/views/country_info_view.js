@@ -1,7 +1,8 @@
 const PubSub = require('../helpers/pub_sub.js');
 
 const CountryInfoView = function(container){
-  this.container = container
+  this.container = container;
+  // this.borders = null;
 }
 
 CountryInfoView.prototype.bindEvents = function (){
@@ -10,9 +11,14 @@ CountryInfoView.prototype.bindEvents = function (){
     this.show(country);
     console.log(country);
   });
+  // PubSub.subscribe('Country:allData', (event) =>{
+  //   const allCountries = event.detail;
+  //   this.getCodes(allCountries);
+  // });
 };
 
 CountryInfoView.prototype.show = function(country){
+  this.container.innerHTML='';
   const countryName = document.createElement('h1');
   countryName.textContent = country.name;
   this.container.appendChild(countryName);
@@ -32,6 +38,21 @@ CountryInfoView.prototype.show = function(country){
     const languageli = document.createElement('li');
     languageli.textContent = language.name;
     countryLanguages.appendChild(languageli);
+  });
+
+  borders = document.createElement('ul');
+  this.container.appendChild(borders);
+  const allBorders = country.borders;
+  allBorders.forEach((border) => {
+    const borderli = document.createElement('li');
+    borderli.textContent = border;
+    borders.appendChild(borderli);
+  });
+
+  borders.addEventListener('click', (event) =>{
+    const selectedBorder = event.target.textContent;
+    console.log(selectedBorder);
+    PubSub.publish('CountryInfoView:selectedBorder', selectedBorder);
   });
 }
 
